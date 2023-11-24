@@ -8,36 +8,41 @@
 import Foundation
 
 struct Farm {
-    func feed(_ animal: Cow) {
-        let pieceOfHay = Hay.harvest()
-        animal.eat(pieceOfHay)
-    }
-    
-    func feed(_ animal: Donkey) {
-        let aCarrot = Carrot.harvest()
-        animal.eat(aCarrot)
-    }
-    
-    func feed(_ animal: Chicken) {
-        let cobOfCorn = Corn.harvest()
-        animal.eat(cobOfCorn)
+    func feed(_ animal: Animal) {
+        if animal is Cow {
+            animal.eat(Hay())
+        } else if animal is Donkey {
+            animal.eat(Carrot())
+        } else {
+            animal.eat(Corn())
+        }
     }
 }
 
-struct Cow {
-    func eat(_ food: Hay) {
+class Animal {
+    //had to make the type of parameter 'food' Any because each Animal could eat different types of food
+    func eat(_ food: Any) {
+        fatalError("Not implemented abstract method in a subclass")
+    }
+}
+
+class Cow: Animal {
+    override func eat(_ food: Any) {
+        guard let food = food as? Hay else { fatalError("Cow cannot eat \(food)")}
         print("I'm munching on \(food.display)")
     }
 }
 
-struct Donkey {
-    func eat(_ food: Carrot) {
+class Donkey: Animal {
+    override func eat(_ food: Any) {
+        guard let food = food as? Carrot else { fatalError("Donkey cannot eat \(food)")}
         print("I'm nibbling on a \(food.display)")
     }
 }
 
-struct Chicken {
-    func eat(_ food: Corn) {
+class Chicken: Animal {
+    override func eat(_ food: Any) {
+        guard let food = food as? Corn else { fatalError("Chicken cannot eat \(food)")}
         print("I'm pecking at \(food.display)")
     }
 }
