@@ -18,5 +18,7 @@ myFarm.feed(Cow())
 myFarm.feed(Donkey())
 myFarm.feed(Chicken())
 
-myFarm.feedAll([Chicken(),Chicken(),Chicken(),Cow(),Donkey(),Donkey()])
+let farmAnimals: [any Animal] = [Chicken(),Chicken(),Chicken(),Cow(),Donkey(),Donkey()]
+
+myFarm.feedAll(farmAnimals)
 
