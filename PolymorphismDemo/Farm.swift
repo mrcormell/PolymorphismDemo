@@ -8,46 +8,58 @@
 import Foundation
 
 struct Farm {
-    func feed(_ animal: Animal) {
-        if animal is Cow {
-            animal.eat(Hay())
-        } else if animal is Donkey {
-            animal.eat(Carrot())
-        } else {
-            animal.eat(Corn())
+    //opaque type (underlying type is substituted in at runtime)
+    //caller determines the underlining type
+    //fixed for the scope of the parameter (each call can have a different underlying type)
+    func feed(_ animal: some Animal) {
+        let food = type(of: animal).Feed.harvest()
+        animal.eat(food)
+    }
+    
+    //the array will accept any combination of types that conform to the Animal protocol
+    func feedAll(_ animals: [any Animal]) {
+        for animal in animals {
+            feed(animal)
         }
     }
 }
 
-class Animal {
-    //had to make the type of parameter 'food' Any because each Animal could eat different types of food
-    func eat(_ food: Any) {
-        fatalError("Not implemented abstract method in a subclass")
-    }
+//abstract concept
+protocol Animal {
+    associatedtype Feed: AnimalFeed
+    func eat(_ food: Feed)
 }
 
-class Cow: Animal {
-    override func eat(_ food: Any) {
-        guard let food = food as? Hay else { fatalError("Cow cannot eat \(food)")}
+//concrete type
+struct Cow: Animal {
+    func eat(_ food: Hay) {
         print("I'm munching on \(food.display)")
     }
 }
 
-class Donkey: Animal {
-    override func eat(_ food: Any) {
-        guard let food = food as? Carrot else { fatalError("Donkey cannot eat \(food)")}
+//concrete type
+struct Donkey: Animal {
+    func eat(_ food: Carrot) {
         print("I'm nibbling on a \(food.display)")
     }
 }
 
-class Chicken: Animal {
-    override func eat(_ food: Any) {
-        guard let food = food as? Corn else { fatalError("Chicken cannot eat \(food)")}
+//concrete type
+struct Chicken: Animal {
+    func eat(_ food: Corn) {
         print("I'm pecking at \(food.display)")
     }
 }
 
-struct Hay {
+//abstract concept
+protocol AnimalFeed {
+    var display: String { get }
+    associatedtype Feed: AnimalFeed where Feed == Self //Self is the type that conforms to the protocol AnimalFeed
+    static func harvest() -> Feed
+}
+
+//concrete type of animal feed
+struct Hay: AnimalFeed {
     let display = "🌾"
     
     static func harvest() -> Hay {
@@ -55,7 +67,8 @@ struct Hay {
     }
 }
 
-struct Carrot {
+//concrete type of animal feed
+struct Carrot: AnimalFeed {
     let display = "🥕"
     
     static func harvest() -> Carrot {
@@ -63,7 +76,8 @@ struct Carrot {
     }
 }
 
-struct Corn {
+//concrete type of animal feed
+struct Corn: AnimalFeed {
     let display = "🌽"
     
     static func harvest() -> Corn {
