@@ -17,7 +17,7 @@ struct Farm {
     }
     
     //the array will accept any combination of types that conform to the Animal protocol
-    func feedAll(_ animals: [any Animal]) {
+    func feed(_ animals: [any Animal]) {
         for animal in animals {
             feed(animal)
         }
